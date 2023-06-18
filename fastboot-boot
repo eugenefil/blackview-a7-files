@@ -1,0 +1,4 @@
+#!/bin/sh
+# --tags-offset is required for some reason (maybe b/c dtb contains atag in /chosen)
+# --cmdline is not required
+fastboot boot --cmdline bootopt=64S3,32S1,32S1 --base 0x80000000 --kernel-offset 0x8000 --ramdisk-offset 0x4000000 --tags-offset 0xe000000 "$@"

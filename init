@@ -1,0 +1,11 @@
+#!/busybox sh
+
+for f in /*.apk; do
+	/busybox tar -xf "$f" --exclude '.*'
+done
+/busybox rm /*.apk
+
+/busybox mv /init.1 /init # replace this bootstrap with proper init
+/busybox mkdir -p /bin
+/busybox mv /busybox /bin/busybox
+exec /bin/busybox sh /init

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -euo pipefail
+
+cp -p init* build
+cd build
+echo init* busybox *.apk | tr ' ' '\n' | cpio -o -H newc -R 0:0 --renumber-inodes | gzip >ramdisk

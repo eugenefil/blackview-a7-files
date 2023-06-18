@@ -1,0 +1,3 @@
+#!/bin/sh
+
+while read p; do [ -z "$p" ] && continue; echo $p; sudo adb shell pm disable-user "$p" </dev/null; done <disable-packages.list

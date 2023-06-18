@@ -1,0 +1,20 @@
+#!/bin/sh
+set -euo pipefail
+
+mkdir build
+cd build
+
+url="http://dl-cdn.alpinelinux.org/alpine/edge/main/armv7"
+pkglist=$(curl -L -sS "$url")
+
+bb_static_pkg=
+for pkgbase in busybox-static busybox-extras musl; do
+	pkg=$(echo "$pkglist" | grep -o ">$pkgbase-[^-]*-r.*\.apk<" | tr -d '<>')
+	[ -z "${pkgbase#busybox-static}" ] && bb_static_pkg="$pkg"
+	echo "fetching $pkg"
+	curl -L -O "$url/$pkg"
+done
+
+tar xOf "$bb_static_pkg" bin/busybox.static >busybox
+chmod 755 busybox
+rm "$bb_static_pkg"
