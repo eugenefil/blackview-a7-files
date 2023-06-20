@@ -1,20 +1,24 @@
 #!/bin/sh
 set -euo pipefail
 
-mkdir build
-cd build
+mkdir -p cache-apk
+cd cache-apk
 
+echo "fetching package list" >&2
 url="http://dl-cdn.alpinelinux.org/alpine/edge/main/armv7"
-pkglist=$(curl -L -sS "$url")
+wget -N "$url"
 
-bb_static_pkg=
-for pkgbase in busybox-static busybox-extras musl; do
-	pkg=$(echo "$pkglist" | grep -o ">$pkgbase-[^-]*-r.*\.apk<" | tr -d '<>')
-	[ -z "${pkgbase#busybox-static}" ] && bb_static_pkg="$pkg"
-	echo "fetching $pkg"
-	curl -L -O "$url/$pkg"
+while read pkg; do
+	pkgfile=$(grep -o ">$pkg-[^-]*-r.*\.apk<" armv7 | tr -d '<>')
+	if [ -z "$pkgfile" ]; then
+		echo "$pkg not found"
+		exit 1
+	fi
+	if [ -n "${pkgfile#*.apk}" ]; then
+		echo "more than 1 package found: " $pkgfile
+		exit 1
+	fi
+	echo >&2
+	echo "fetching $pkgfile" >&2
+	wget -N "$url/$pkgfile"
 done
-
-tar xOf "$bb_static_pkg" bin/busybox.static >busybox
-chmod 755 busybox
-rm "$bb_static_pkg"

@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eu
 
-sudo ./fastboot-boot ../A7-Blackview-V1.0-20170814/kernel build/ramdisk
+sudo ./fastboot-boot ../A7-Blackview-V1.0-20170814/kernel ramdisk.gz

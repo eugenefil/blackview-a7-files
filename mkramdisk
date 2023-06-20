@@ -1,6 +1,17 @@
 #!/bin/sh
 set -euo pipefail
 
-cp -p init* build
-cd build
-echo init* busybox *.apk | tr ' ' '\n' | cpio -o -H newc -R 0:0 --renumber-inodes | gzip >ramdisk
+rm -rf ramdisk
+mkdir -p ramdisk
+
+while read pkg; do
+	pkgfile=$(find cache-apk | grep "cache-apk/$pkg-[^-]*-r.*\.apk")
+	echo "extracting $pkgfile" >&2
+	tar -C ramdisk -xf "$pkgfile" --exclude '.*'
+done <ramdisk-apks.lst
+
+cp -p init ramdisk
+ln -s busybox ramdisk/bin/sh # init uses #!/bin/sh
+
+echo "packing ramdisk" >&2
+(cd ramdisk; find | sort | cpio -o -H newc -R 0:0 --renumber-inodes | gzip) >ramdisk.gz
