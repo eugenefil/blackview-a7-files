@@ -9,13 +9,12 @@ url="http://dl-cdn.alpinelinux.org/alpine/edge/main/armv7"
 wget -N "$url"
 
 while read pkg; do
-	pkgfile=$(grep -o ">$pkg-[^-]*-r.*\.apk<" armv7 | tr -d '<>')
-	if [ -z "$pkgfile" ]; then
-		echo "$pkg not found"
+	if ! pkgfile=$(grep -o ">$pkg-[^-]*-r.*\.apk<" armv7 | tr -d '<>'); then
+		echo "package $pkg not found" >&2
 		exit 1
 	fi
 	if [ -n "${pkgfile#*.apk}" ]; then
-		echo "more than 1 package found: " $pkgfile
+		echo "more than 1 package found: " $pkgfile >&2
 		exit 1
 	fi
 	echo >&2

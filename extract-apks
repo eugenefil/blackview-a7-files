@@ -1,0 +1,16 @@
+#!/bin/sh
+set -euo pipefail
+
+me="${0##*/}"
+if [ $# -ne 1 ]; then
+	echo "usage: $me DEST" >&2
+	exit 1
+fi
+dest="$1"
+
+mkdir -p "$dest"
+while read pkg; do
+	pkgfile=$(find cache-apk | grep "cache-apk/$pkg-[^-]*-r.*\.apk")
+	echo "extracting $pkgfile" >&2
+	tar -C "$dest" -xf "$pkgfile" --exclude '.*'
+done
