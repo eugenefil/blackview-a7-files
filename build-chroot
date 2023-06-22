@@ -1,4 +1,4 @@
 #!/bin/sh
 
-./fetch-apks <chroot-apks.lst
+./fetch-apks <apks.lst
 ./mkchroot

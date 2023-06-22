@@ -3,10 +3,11 @@ set -euo pipefail
 
 chroot="${1:-chroot}"
 sudo rm -rf "$chroot"
-sudo ./extract-apks "$chroot" <chroot-apks.lst
+sudo ./extract-apks "$chroot" <apks.lst
 
 sudo mkdir -p "$chroot"/sbin "$chroot"/usr/bin "$chroot"/usr/sbin
 sudo chroot "$chroot" /bin/busybox --install -s
+sudo chroot "$chroot" /bin/busybox-extras --install -s
 
 sudo tee "$chroot"/etc/passwd >/dev/null <<EOF
 root::0:0:root:/root:/bin/sh

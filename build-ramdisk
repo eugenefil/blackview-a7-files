@@ -1,4 +1,4 @@
 #!/bin/sh
 
-./fetch-apks <ramdisk-apks.lst
+./fetch-apks <apks.lst
 ./mkramdisk
