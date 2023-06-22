@@ -19,11 +19,5 @@ EOF
 sudo mkdir -p "$chroot"/home/u
 sudo chroot "$chroot" chown u:u /home/u
 
-sudo cp /etc/resolv.conf "$chroot"/etc
-sudo mkdir -p "$chroot"/lib/apk/db
-sudo touch "$chroot"/lib/apk/db/lock
-sudo mkdir -p "$chroot"/etc/apk
-sudo tee "$chroot"/etc/apk/world <chroot-apks.lst >/dev/null
-sudo cp /etc/apk/repositories "$chroot"/etc/apk
-sudo cp -r /etc/apk/keys "$chroot"/etc/apk
+sudo ./setup-apk "$chroot"
 sudo chroot "$chroot" apk update

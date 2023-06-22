@@ -1,0 +1,17 @@
+#!/bin/sh
+set -euo pipefail
+me="${0##*/}"
+
+if [ $# -ne 1 ]; then
+	echo "usage: $me ROOT" >&2
+	exit 1
+fi
+root="$1"
+
+cp /etc/resolv.conf "$root"/etc
+mkdir -p "$root"/lib/apk/db
+touch "$root"/lib/apk/db/lock
+mkdir -p "$root"/etc/apk
+touch "$root"/etc/apk/world
+cp /etc/apk/repositories "$root"/etc/apk
+cp -r /etc/apk/keys "$root"/etc/apk
