@@ -2,3 +2,4 @@ cache-apk/
 ramdisk/
 ramdisk.gz
 chroot/
+chroot-bind-mounts.lst
