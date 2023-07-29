@@ -12,4 +12,6 @@ fi
 
 mountpoint -q chroot/proc || sudo mount -t proc proc chroot/proc
 mountpoint -q chroot/dev || sudo mount -t devtmpfs devtmpfs chroot/dev
+mountpoint -q chroot/dev/pts || sudo mount -t devpts devpts chroot/dev/pts
+mountpoint -q chroot/tmp || sudo mount -t tmpfs tmp chroot/tmp
 exec sudo chroot chroot/ /bin/sh
