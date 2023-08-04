@@ -4,9 +4,23 @@ me="${0##*/}"
 
 usage()
 {
-	echo "usage: $me KERNEL RAMDISK OUTFILE"
+	echo "usage: $me [-c CMDLINE] KERNEL RAMDISK OUTFILE"
 	exit 1
 }
 
+cmdline=
+while [ $# -gt 0 ]; do
+	case "$1" in
+	-c)
+		shift
+		[ $# -gt 0 ] || usage
+		cmdline="$1"
+		;;
+	-*) usage;;
+	*) break;;
+	esac
+	shift
+done
 [ $# -eq 3 ] || usage
-mkbootimg-osm0sis --kernel "$1" --ramdisk "$2" --cmdline "bootopt=64S3,32S1,32S1" --base 0x80000000 --kernel_offset 0x00008000 --ramdisk_offset 0x04000000 --tags_offset 0x0e000000 -o "$3"
+
+mkbootimg-osm0sis --kernel "$1" --ramdisk "$2" --cmdline "bootopt=64S3,32S1,32S1 $cmdline" --base 0x80000000 --kernel_offset 0x00008000 --ramdisk_offset 0x04000000 --tags_offset 0x0e000000 -o "$3"
