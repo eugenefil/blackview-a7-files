@@ -17,9 +17,20 @@ mknod -m 664 /dev/zero c 1 5
 mknod -m 664 /dev/urandom c 1 9
 mknod -m 664 /dev/ptmx c 5 2
 mknod -m 664 /dev/fb0 c 29 0
+
 mkdir /dev/input
 for i in $(seq 0 9); do
 	mknod -m 664 /dev/input/event$i c 13 $((64 + i))
+done
+
+mkdir -p /dev/disk/by-partlabel
+for d in /sys/class/block/mmcblk[0-9] /sys/class/block/mmcblk[0-9]p[0-9]*; do
+	IFS=: read maj min <"$d"/dev || continue
+	blkdev="${d##*/}"
+	mknod /dev/"$blkdev" b "$maj" "$min" || continue
+	partname=$(grep PARTNAME "$d"/uevent | cut -d= -f2)
+	[ -n "$partname" ] || continue
+	ln -sf ../../"$blkdev" /dev/disk/by-partlabel/"$partname"
 done
 
 cat /dev/zero >/dev/fb0 # clear the screen
