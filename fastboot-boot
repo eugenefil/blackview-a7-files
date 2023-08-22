@@ -1,4 +1,28 @@
 #!/bin/sh
+set -euo pipefail
+me="${0##*/}"
+
+usage()
+{
+	echo "usage: $me [-c CMDLINE] KERNEL [RAMDISK]"
+	exit 1
+}
+
+cmdline=
+while [ $# -gt 0 ]; do
+	case "$1" in
+	-c)
+		shift
+		[ $# -gt 0 ] || usage
+		cmdline="$1"
+		;;
+	-*) usage;;
+	*) break;;
+	esac
+	shift
+done
+[ $# -gt 0 ] || usage
+
 # --tags-offset is required for some reason (maybe b/c dtb contains atag in /chosen)
 # --cmdline is not required
-fastboot boot --cmdline bootopt=64S3,32S1,32S1 --base 0x80000000 --kernel-offset 0x8000 --ramdisk-offset 0x4000000 --tags-offset 0xe000000 "$@"
+fastboot boot --cmdline "bootopt=64S3,32S1,32S1 $cmdline" --base 0x80000000 --kernel-offset 0x8000 --ramdisk-offset 0x4000000 --tags-offset 0xe000000 "$@"
