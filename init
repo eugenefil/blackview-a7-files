@@ -35,19 +35,23 @@ done
 
 cat /dev/zero >/dev/fb0 # clear the screen
 
-echo "0" >/sys/class/android_usb/android0/enable 
-echo "dead" >/sys/class/android_usb/android0/idVendor 
-echo "d00d" >/sys/class/android_usb/android0/idProduct 
-echo "rndis" >/sys/class/android_usb/android0/functions 
-echo "1" >/sys/class/android_usb/android0/enable 
+net() {
+	[ -d /sys/class/android_usb ] || return 1
+	echo "0" >/sys/class/android_usb/android0/enable 
+	echo "dead" >/sys/class/android_usb/android0/idVendor 
+	echo "d00d" >/sys/class/android_usb/android0/idProduct 
+	echo "rndis" >/sys/class/android_usb/android0/functions 
+	echo "1" >/sys/class/android_usb/android0/enable 
 
-while ! [ -e /sys/class/net/rndis0 ]; do sleep 1; done
-ip link set rndis0 up
-ip addr add 192.168.44.1/24 dev rndis0
-ip route add default via 192.168.44.2
+	while ! [ -e /sys/class/net/rndis0 ]; do sleep 1; done
+	ip link set rndis0 up
+	ip addr add 192.168.44.1/24 dev rndis0
+	ip route add default via 192.168.44.2
 
-telnetd -l /bin/sh
-tcpsvd -E 0.0.0.0 21 /usr/sbin/ftpd -wA / &
+	telnetd -l /bin/sh
+	tcpsvd -E 0.0.0.0 21 /usr/sbin/ftpd -wA / &
+}
+net
 
 while true; do
 	# init has /dev/console on fd 0, 1, 2, so shell inherits them
